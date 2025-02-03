@@ -8,10 +8,7 @@ def take_input():
         matrix = [[0]*column for i in range(row)]
         
         start_i, start_j = map(int, start.split(","))
-        matrix[start_i-1][start_j-1] = 1
-
         end_i, end_j = map(int, end.split(","))
-        matrix[end_i-1][end_j-1] = 2
 
         for coordinate in blocked:
             coor_i, coor_j = map(int, coordinate.split(","))
