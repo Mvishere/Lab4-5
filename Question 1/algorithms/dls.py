@@ -1,14 +1,12 @@
 def search(matrix, start, end, max_depth=3):
     rows, cols = len(matrix), len(matrix[0])
-    all_paths = []
     
     def backtrack(x, y, path, visited, depth=0):
         if depth > max_depth:
-            return
+            return 
 
         if (x, y) == end:
-            all_paths.append(path[:])
-            return
+            return path
         
         directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
         
@@ -24,4 +22,4 @@ def search(matrix, start, end, max_depth=3):
     visited.add(start)
     backtrack(start[0], start[1], [(start[0] + 1, start[1] + 1)], visited)
     
-    return all_paths
+    return []

@@ -21,4 +21,4 @@ def search(matrix, start, end):
     visited.add(start)
     backtrack(start[0], start[1], [(start[0] + 1, start[1] + 1)], visited)
     
-    return all_paths
+    return all_paths[0]

@@ -3,24 +3,29 @@ from algorithms import dfs
 from algorithms import bfs
 from algorithms import dls
 from algorithms import greedy
+from algorithms import ucs
+from algorithms import a_star
 
 def main():
     row, column, start, end, matrix, algorithm = take_input()
 
-    paths = []
+    path = []
     if algorithm == "dfs":
-        paths = dfs.search(matrix, start, end)
+        path = dfs.search(matrix, start, end)
     elif algorithm == "bfs":
-        paths = bfs.search(matrix, start, end)
+        path = bfs.search(matrix, start, end)
     elif algorithm == "dls":
-        paths = dls.search(matrix, start, end, 10)
+        path = dls.search(matrix, start, end)
     elif algorithm == "greedy":
-        paths = greedy.search(matrix, start, end)
+        path = greedy.search(matrix, start, end)
+    elif algorithm == "ucs":
+        path = ucs.search(matrix, start, end)
+    elif algorithm == "a_star":
+        path = a_star.search(matrix, start, end)
     else:
         print("Invalid Input")
-    print(len(paths))
-    for i in paths:
-        print(i)
+    with open("output.txt", "+a") as output_file:
+        output_file.write(f"{algorithm}: {path}\n")
 
 if __name__ == "__main__":
     main()
