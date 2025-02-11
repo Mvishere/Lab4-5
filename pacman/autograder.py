@@ -14,7 +14,7 @@
 
 # imports from python standard library
 import grading
-import imp
+import importlib
 import optparse
 import os
 import re
@@ -124,17 +124,32 @@ def loadModuleString(moduleSource):
     #    ValueError: load_module arg#2 should be a file or None
     #
     #f = StringIO(moduleCodeDict[k])
-    #tmp = imp.load_module(k, f, k, (".py", "r", imp.PY_SOURCE))
-    tmp = imp.new_module(k)
+    #tmp = importLib.load_module(k, f, k, (".py", "r", importlib.PY_SOURCE))
+    tmp = importlib.new_module(k)
     exec(moduleCodeDict[k] in tmp.__dict__)
     setModuleName(tmp, k)
     return tmp
 
 import py_compile
 
+import importlib.util
+import os
+
 def loadModuleFile(moduleName, filePath):
-    with open(filePath, 'r') as f:
-        return imp.load_module(moduleName, f, "%s.py" % moduleName, (".py", "r", imp.PY_SOURCE))
+    if not os.path.exists(filePath):
+        raise FileNotFoundError(f"Module file {filePath} not found.")
+
+    spec = importlib.util.spec_from_file_location(moduleName, filePath)
+    if spec is None:
+        raise ImportError(f"Could not load spec for {moduleName} from {filePath}")
+
+    module = importlib.util.module_from_spec(spec)
+    
+    if spec.loader is None:
+        raise ImportError(f"No loader found for {moduleName} in {filePath}")
+    
+    spec.loader.exec_module(module)
+    return module
 
 
 def readFile(path, root=""):
@@ -269,8 +284,8 @@ def evaluate(generateSolutions, testRoot, moduleDict, exceptionMap=ERROR_HINT_MA
         questionDicts[q] = questionDict
 
         # load test cases into question
-        tests = filter(lambda t: re.match('[^#~.].*\.test\Z', t), os.listdir(subdir_path))
-        tests = map(lambda t: re.match('(.*)\.test\Z', t).group(1), tests)
+        tests = filter(lambda t: re.match(r'[^#~.].*\.test\Z', t), os.listdir(subdir_path))
+        tests = map(lambda t: re.match(r'(.*)\.test\Z', t).group(1), tests)
         for t in sorted(tests):
             test_file = os.path.join(subdir_path, '%s.test' % t)
             solution_file = os.path.join(subdir_path, '%s.solution' % t)
@@ -334,7 +349,7 @@ if __name__ == '__main__':
     if options.generateSolutions:
         confirmGenerate()
     codePaths = options.studentCode.split(',')
-    # moduleCodeDict = {}
+    moduleCodeDict = {}
     # for cp in codePaths:
     #     moduleName = re.match('.*?([^/]*)\.py', cp).group(1)
     #     moduleCodeDict[moduleName] = readFile(cp, root=options.codeRoot)
@@ -343,9 +358,9 @@ if __name__ == '__main__':
 
     moduleDict = {}
     for cp in codePaths:
-        moduleName = re.match('.*?([^/]*)\.py', cp).group(1)
+        moduleName = re.match(r'.*?([^/]*)\.py', cp).group(1)
         moduleDict[moduleName] = loadModuleFile(moduleName, os.path.join(options.codeRoot, cp))
-    moduleName = re.match('.*?([^/]*)\.py', options.testCaseCode).group(1)
+        moduleName = re.match(r'.*?([^/]*)\.py', options.testCaseCode).group(1)
     moduleDict['projectTestClasses'] = loadModuleFile(moduleName, os.path.join(options.codeRoot, options.testCaseCode))
 
 
