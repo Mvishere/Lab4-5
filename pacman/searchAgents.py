@@ -296,7 +296,6 @@ class CornersProblem(search.SearchProblem):
         """
         "*** YOUR CODE HERE ***"
         return (self.startingPosition,(False,False,False,False))
-        util.raiseNotDefined()
 
     def isGoalState(self, state):
         """
@@ -304,7 +303,6 @@ class CornersProblem(search.SearchProblem):
         """
         "*** YOUR CODE HERE ***"
         return all(state[1])
-        util.raiseNotDefined()
 
     def getSuccessors(self, state):
         """
@@ -504,7 +502,6 @@ class ClosestDotSearchAgent(SearchAgent):
         "*** YOUR CODE HERE ***"
         path = search.bfs(problem)
         return path
-        util.raiseNotDefined()
 
 class AnyFoodSearchProblem(PositionSearchProblem):
     """
